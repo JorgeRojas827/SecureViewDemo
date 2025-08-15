@@ -1,97 +1,242 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# SecureView Demo
 
-# Getting Started
+Una aplicación React Native que demuestra la implementación de vistas seguras para datos sensibles de tarjetas, siguiendo los principios de Clean Architecture y Domain-Driven Design.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 🚀 Características
 
-## Step 1: Start Metro
+- **Gestión de Tarjetas**: Listado y visualización de tarjetas de crédito/débito
+- **Vista Segura**: Integración con módulo nativo para mostrar datos sensibles de forma segura
+- **Arquitectura Limpia**: Separación clara de responsabilidades entre capas
+- **TypeScript**: Tipado estricto en toda la aplicación
+- **Tests Completos**: Cobertura de tests del 85.88%
+- **Performance Optimizada**: React.memo, useCallback, useMemo
+- **Accesibilidad**: Labels y hints para screen readers
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 📱 Capturas de Pantalla
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+La aplicación muestra una lista de tarjetas con la opción de "Ver datos sensibles" que abre una vista segura nativa.
 
-```sh
-# Using npm
-npm start
+## 🏗️ Arquitectura
 
-# OR using Yarn
-yarn start
-```
+### Capa de Dominio (Domain Layer)
 
-## Step 2: Build and run your app
+- **Entidades**: `Card`, `SecureCardData`, `SecureToken`
+- **Casos de Uso**: `GetCardsUseCase`, `GenerateSecureTokenUseCase`, `ShowSecureCardUseCase`
+- **Repositorios**: Interfaces abstractas para acceso a datos
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### Capa de Infraestructura (Infrastructure Layer)
 
-### Android
+- **Servicios de Datos**: `CardDataService`, `SecureTokenService`, `SecurityLoggerService`
+- **Implementaciones de Repositorios**: `CardRepositoryImpl`, `TokenRepositoryImpl`, `SecureCardBridgeImpl`
 
-```sh
-# Using npm
-npm run android
+### Capa de Presentación (Presentation Layer)
 
-# OR using Yarn
-yarn android
-```
+- **Componentes**: `CardItem`, `CardsList`, `DashboardScreen`
+- **Hooks**: `useCards`, `useSecureCardView`
+
+## 🛠️ Tecnologías
+
+- **React Native**: 0.81.0
+- **TypeScript**: 5.8.3
+- **Jest**: Framework de testing
+- **React Native Testing Library**: Testing de componentes
+- **Clean Architecture**: Patrón arquitectónico
+- **Domain-Driven Design**: Diseño centrado en el dominio
+
+## 📦 Instalación
+
+1. **Clonar el repositorio**
+
+   ```bash
+   git clone <repository-url>
+   cd SecureViewDemo
+   ```
+
+2. **Instalar dependencias**
+
+   ```bash
+   npm install
+   ```
+
+3. **Instalar dependencias de iOS (solo macOS)**
+   ```bash
+   cd ios && pod install && cd ..
+   ```
+
+## 🚀 Ejecución
 
 ### iOS
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+```bash
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### Android
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```bash
+npm run android
+```
 
-## Step 3: Modify your app
+### Metro Bundler
 
-Now that you have successfully run the app, let's make changes!
+```bash
+npm start
+```
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## 🧪 Testing
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+### Ejecutar todos los tests
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+```bash
+npm test
+```
 
-## Congratulations! :tada:
+### Ejecutar tests con cobertura
 
-You've successfully run and modified your React Native App. :partying_face:
+```bash
+npm run test:coverage
+```
 
-### Now what?
+### Ejecutar tests en modo watch
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+```bash
+npm run test:watch
+```
 
-# Troubleshooting
+## 📊 Cobertura de Tests
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+Actualmente tenemos una cobertura del **85.88%** con **116 tests pasando**:
 
-# Learn More
+- **Statements**: 85.88%
+- **Branches**: 77.35%
+- **Functions**: 83.67%
+- **Lines**: 86.16%
 
-To learn more about React Native, take a look at the following resources:
+### Distribución por Capas:
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- **Presentación**: 100% coverage
+- **Infraestructura**: 93.33% coverage
+- **Dominio**: 33.33% coverage (interfaces)
+
+## 🔧 Configuración del Proyecto
+
+### Estructura de Archivos
+
+```
+src/
+├── capabilities/
+│   └── card-management/
+│       ├── domain/
+│       │   ├── entities/
+│       │   ├── repositories/
+│       │   └── use-cases/
+│       ├── infrastructure/
+│       │   ├── datasources/
+│       │   └── repositories/
+│       └── presentation/
+│           ├── components/
+│           ├── hooks/
+│           └── screens/
+└── shared/
+    ├── constants/
+    ├── types/
+    ├── ui/
+    └── utils/
+```
+
+### Scripts Disponibles
+
+- `npm start`: Iniciar Metro bundler
+- `npm run ios`: Ejecutar en iOS
+- `npm run android`: Ejecutar en Android
+- `npm test`: Ejecutar tests
+- `npm run test:coverage`: Ejecutar tests con cobertura
+- `npm run test:watch`: Ejecutar tests en modo watch
+- `npm run lint`: Ejecutar ESLint
+- `npm run lint:fix`: Corregir errores de ESLint automáticamente
+
+## 🔒 Seguridad
+
+La aplicación implementa múltiples capas de seguridad:
+
+1. **Tokens Seguros**: Generación de tokens temporales para acceso a datos sensibles
+2. **Vista Nativa Segura**: Integración con módulo nativo `fintech-secure-native`
+3. **Logging de Seguridad**: Registro de todos los accesos a datos sensibles
+4. **Validación de Acceso**: Verificación de permisos de usuario por tarjeta
+
+## 🎯 Casos de Uso
+
+### Ver Datos Sensibles de Tarjeta
+
+1. El usuario selecciona una tarjeta de la lista
+2. Presiona "Ver datos sensibles"
+3. Se genera un token seguro
+4. Se abre la vista nativa segura con los datos completos
+5. Se registra el acceso en el log de seguridad
+
+### Gestión de Estados
+
+- **Loading**: Estados de carga individuales por tarjeta
+- **Error**: Manejo robusto de errores con mensajes informativos
+- **Empty State**: Estados vacíos cuando no hay tarjetas
+
+## 🔧 Desarrollo
+
+### Agregar Nueva Funcionalidad
+
+1. Definir entidades en la capa de dominio
+2. Crear casos de uso para la lógica de negocio
+3. Implementar repositorios en la capa de infraestructura
+4. Crear componentes en la capa de presentación
+5. Agregar tests para todas las capas
+
+### Convenciones de Código
+
+- **TypeScript**: Tipado estricto obligatorio
+- **Clean Architecture**: Respetar la separación de capas
+- **SOLID Principles**: Aplicar principios SOLID
+- **Testing**: Tests unitarios para toda la lógica de negocio
+
+## 📈 Performance
+
+### Optimizaciones Implementadas
+
+- **React.memo**: Para componentes que no necesitan re-renderizarse
+- **useCallback**: Para funciones que se pasan como props
+- **useMemo**: Para cálculos costosos
+- **FlatList**: Para listas largas con virtualización
+
+### Métricas de Performance
+
+- **Bundle Size**: Optimizado con tree shaking
+- **Memory Usage**: Gestión eficiente de memoria
+- **Startup Time**: Carga rápida de la aplicación
+
+## 🤝 Contribución
+
+1. Fork el proyecto
+2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 👥 Autores
+
+- **Jorge Luis Rojas Poma** - _Desarrollo inicial_ - [GitHub](https://github.com/jorgeluisrojaspoma)
+
+## 🙏 Agradecimientos
+
+- React Native Community
+- Clean Architecture por Uncle Bob
+- Domain-Driven Design por Eric Evans
+- Testing Library por Kent C. Dodds
+
+## 📞 Contacto
+
+Jorge Luis Rojas Poma - [LinkedIn](https://linkedin.com/in/jorgeluisrojaspoma)
+
+Link del Proyecto: [https://github.com/jorgeluisrojaspoma/SecureViewDemo](https://github.com/jorgeluisrojaspoma/SecureViewDemo)

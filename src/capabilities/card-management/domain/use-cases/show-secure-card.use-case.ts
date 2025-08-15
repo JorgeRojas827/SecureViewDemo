@@ -6,9 +6,9 @@ export interface SecureCardViewParams {
 }
 
 export class ShowSecureCardViewUseCase {
-  constructor(private secureCardBridge: SecureCardBridge) {}
+  constructor(private readonly secureCardBridge: SecureCardBridge) {}
 
   async execute(params: SecureCardViewParams): Promise<SecureCardViewResult> {
-    return await this.secureCardBridge.openSecureView(params);
+    return this.secureCardBridge.openSecureView(params);
   }
 }

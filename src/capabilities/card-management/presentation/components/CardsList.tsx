@@ -1,11 +1,11 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import {
   FlatList,
   View,
   Text,
   StyleSheet,
   RefreshControl,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { Card } from '../../domain/entities';
 import { CardItem } from './CardItem';
@@ -16,53 +16,59 @@ interface CardsListProps {
   error: string | null;
   onRefresh: () => void;
   onShowSecureData: (cardId: string) => void;
-  secureViewLoading?: boolean;
+  isLoadingCard: (cardId: string) => boolean;
 }
 
-export const CardsList = memo<CardsListProps>(({
-  cards,
-  loading,
-  error,
-  onRefresh,
-  onShowSecureData,
-  secureViewLoading
-}) => {
-  const renderCard = ({ item }: { item: Card }) => (
-    <CardItem
-      card={item}
-      onShowSecureData={onShowSecureData}
-      loading={secureViewLoading}
-    />
+export const CardsList = memo<CardsListProps>(
+  ({ cards, loading, error, onRefresh, onShowSecureData, isLoadingCard }) => {
+      const renderCard = useCallback(
+    ({ item }: { item: Card }) => (
+      <CardItem
+        card={item}
+        onShowSecureData={onShowSecureData}
+        loading={isLoadingCard(item.cardId)}
+        testID="card-item"
+      />
+    ),
+    [onShowSecureData, isLoadingCard]
   );
 
-  const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>No hay tarjetas disponibles</Text>
-    </View>
-  );
+    const keyExtractor = useCallback((item: Card) => item.cardId, []);
 
-  const renderError = () => (
-    <View style={styles.errorContainer}>
-      <Text style={styles.errorText}>Error: {error}</Text>
-    </View>
-  );
+    const renderEmpty = useCallback(
+      () => (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No hay tarjetas disponibles</Text>
+        </View>
+      ),
+      []
+    );
 
-  if (loading && cards.length === 0) {
+    const renderError = useCallback(
+      () => (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error: {error}</Text>
+        </View>
+      ),
+      [error]
+    );
+
+      if (loading && cards.length === 0) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator size="large" color="#007AFF" testID="activity-indicator" />
         <Text style={styles.loadingText}>Cargando tarjetas...</Text>
       </View>
     );
   }
 
-  return (
-    <View style={styles.container}>
-      {error && renderError()}
-      <FlatList
+    return (
+      <View style={styles.container}>
+        {error && renderError()}
+              <FlatList
         data={cards}
         renderItem={renderCard}
-        keyExtractor={(item) => item.cardId}
+        keyExtractor={keyExtractor}
         refreshControl={
           <RefreshControl
             refreshing={loading}
@@ -74,10 +80,12 @@ export const CardsList = memo<CardsListProps>(({
         ListEmptyComponent={renderEmpty}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
+        testID="cards-flatlist"
       />
-    </View>
-  );
-});
+      </View>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: {

@@ -1,25 +1,26 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  StatusBar,
-  SafeAreaView
-} from 'react-native';
+import React, { useCallback } from 'react';
+import { View, Text, StyleSheet, StatusBar, SafeAreaView } from 'react-native';
 import { useCards } from './hooks';
 import { useSecureCardView } from './hooks';
 import { CardsList } from './components';
 
 export const DashboardScreen: React.FC = () => {
   const { cards, loading, error, refetch } = useCards();
-  const { showSecureCard, loading: secureViewLoading, error: secureViewError } = useSecureCardView();
+  const {
+    showSecureCard,
+    error: secureViewError,
+    isLoadingCard,
+  } = useSecureCardView();
 
-  const handleShowSecureData = async (cardId: string) => {
-    await showSecureCard(cardId);
-  };
+  const handleShowSecureData = useCallback(
+    async (cardId: string) => {
+      await showSecureCard(cardId);
+    },
+    [showSecureCard]
+  );
 
-  return (
-    <SafeAreaView style={styles.container}>
+    return (
+    <SafeAreaView style={styles.container} testID="dashboard-screen">
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
       <View style={styles.header}>
@@ -35,7 +36,7 @@ export const DashboardScreen: React.FC = () => {
         error={error || secureViewError}
         onRefresh={refetch}
         onShowSecureData={handleShowSecureData}
-        secureViewLoading={secureViewLoading}
+        isLoadingCard={isLoadingCard}
       />
     </SafeAreaView>
   );
@@ -47,19 +48,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
   },
   header: {
-    padding: 20,
     backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
+    borderBottomColor: '#E9ECEF',
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '700',
+    color: '#212529',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: '#6C757D',
   },
 });

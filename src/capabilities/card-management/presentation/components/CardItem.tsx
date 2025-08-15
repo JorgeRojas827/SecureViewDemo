@@ -4,7 +4,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { Card } from '../../domain/entities';
 
@@ -12,59 +12,69 @@ interface CardItemProps {
   card: Card;
   onShowSecureData: (cardId: string) => void;
   loading?: boolean;
+  testID?: string;
 }
 
-export const CardItem = memo<CardItemProps>(({ card, onShowSecureData, loading }) => {
-  const getBrandColor = (brand: string) => {
-    switch (brand) {
-      case 'VISA': return '#1A1F71';
-      case 'MASTERCARD': return '#EB001B';
-      case 'AMEX': return '#006FCF';
-      default: return '#333';
-    }
-  };
+const BRAND_COLORS = {
+  VISA: '#1A1F71',
+  MASTERCARD: '#EB001B',
+  AMEX: '#006FCF',
+} as const;
 
-  return (
-    <View style={styles.container}>
-      <View style={[styles.card, { borderLeftColor: getBrandColor(card.brand) }]}>
-        <View style={styles.header}>
-          <Text style={styles.alias}>{card.alias}</Text>
-          <Text style={[styles.brand, { color: getBrandColor(card.brand) }]}>
-            {card.brand}
-          </Text>
-        </View>
-        
-        <Text style={styles.maskedPan}>{card.maskedPan}</Text>
-        
-        <View style={styles.footer}>
-          <View>
-            <Text style={styles.label}>Titular</Text>
-            <Text style={styles.holder}>{card.holder}</Text>
+export const CardItem = memo<CardItemProps>(
+  ({ card, onShowSecureData, loading, testID }) => {
+    const brandColor =
+      BRAND_COLORS[card.brand as keyof typeof BRAND_COLORS] || '#333';
+
+    const handlePress = () => {
+      if (!loading) {
+        onShowSecureData(card.cardId);
+      }
+    };
+
+      return (
+    <View style={styles.container} testID={testID}>
+        <View style={[styles.card, { borderLeftColor: brandColor }]}>
+          <View style={styles.header}>
+            <Text style={styles.alias}>{card.alias}</Text>
+            <Text style={[styles.brand, { color: brandColor }]}>
+              {card.brand}
+            </Text>
           </View>
-          
-          <View>
-            <Text style={styles.label}>Vence</Text>
-            <Text style={styles.expiry}>{card.expiry}</Text>
+
+          <Text style={styles.maskedPan}>{card.maskedPan}</Text>
+
+          <View style={styles.footer}>
+            <View>
+              <Text style={styles.label}>Titular</Text>
+              <Text style={styles.holder}>{card.holder}</Text>
+            </View>
+
+            <View>
+              <Text style={styles.label}>Vence</Text>
+              <Text style={styles.expiry}>{card.expiry}</Text>
+            </View>
           </View>
-        </View>
-        
-        <TouchableOpacity
+
+                  <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
-          onPress={() => onShowSecureData(card.cardId)}
+          onPress={handlePress}
           disabled={loading}
           accessibilityLabel={`Ver datos sensibles de ${card.alias}`}
           accessibilityHint="Abre una vista segura con los datos completos de la tarjeta"
+          testID="secure-data-button"
         >
           {loading ? (
-            <ActivityIndicator color="#FFFFFF" size="small" />
+            <ActivityIndicator color="#FFFFFF" size="small" testID="activity-indicator" />
           ) : (
             <Text style={styles.buttonText}>Ver datos sensibles</Text>
           )}
         </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  );
-});
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -74,44 +84,48 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 20,
-    borderLeftWidth: 4,
+    padding: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 4,
+    elevation: 3,
+    borderLeftWidth: 4,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   alias: {
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
+    flex: 1,
   },
   brand: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontWeight: '500',
   },
   maskedPan: {
-    fontSize: 20,
-    fontFamily: 'monospace',
-    color: '#555',
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#666',
     marginBottom: 16,
-    letterSpacing: 2,
+    letterSpacing: 1,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   label: {
     fontSize: 12,
-    color: '#888',
+    color: '#999',
     marginBottom: 4,
   },
   holder: {
@@ -123,17 +137,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: '#333',
-    fontFamily: 'monospace',
   },
   button: {
-    backgroundColor: '#000',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    backgroundColor: '#222',
     borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     alignItems: 'center',
   },
   buttonDisabled: {
-    backgroundColor: '#cccccc',
+    backgroundColor: '#CCCCCC',
   },
   buttonText: {
     color: '#FFFFFF',

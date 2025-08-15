@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card } from '../../domain/entities';
 import { GetCardsUseCase } from '../../domain/use-cases';
 import { CardRepositoryImpl } from '../../infrastructure/repositories/card-repository.impl';
@@ -8,30 +8,29 @@ export const useCards = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getCardsUseCase = new GetCardsUseCase(new CardRepositoryImpl());
+  const getCardsUseCase = useMemo(
+    () => new GetCardsUseCase(new CardRepositoryImpl()),
+    []
+  );
 
-  const loadCards = async () => {
+  const loadCards = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      console.log('Loading cards...');
 
       const cardsData = await getCardsUseCase.execute();
       setCards(cardsData);
-
-      console.log('Cards loaded successfully:', cardsData.length);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
-      console.error('Error loading cards:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [getCardsUseCase]);
 
   useEffect(() => {
     loadCards();
-  }, []);
+  }, [loadCards]);
 
   return {
     cards,

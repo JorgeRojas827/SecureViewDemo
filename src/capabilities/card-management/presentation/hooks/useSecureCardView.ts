@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   GenerateSecureTokenUseCase,
   ShowSecureCardViewUseCase,
@@ -9,36 +9,32 @@ import {
 } from '../../infrastructure/repositories';
 
 interface SecureCardViewState {
-  loading: boolean;
+  loadingCardId: string | null;
   error: string | null;
 }
 
 export const useSecureCardView = () => {
   const [state, setState] = useState<SecureCardViewState>({
-    loading: false,
+    loadingCardId: null,
     error: null,
   });
 
-  const generateTokenUseCase = new GenerateSecureTokenUseCase(
-    new TokenRepositoryImpl(),
+  const generateTokenUseCase = useMemo(
+    () => new GenerateSecureTokenUseCase(new TokenRepositoryImpl()),
+    []
   );
-  const showSecureViewUseCase = new ShowSecureCardViewUseCase(
-    new SecureCardBridgeImpl(),
+
+  const showSecureViewUseCase = useMemo(
+    () => new ShowSecureCardViewUseCase(new SecureCardBridgeImpl()),
+    []
   );
 
   const showSecureCard = useCallback(
     async (cardId: string) => {
       try {
-        setState({ loading: true, error: null });
-        console.log('Starting secure card view process for:', cardId);
+        setState({ loadingCardId: cardId, error: null });
 
-        // 1. Generar token seguro
-        console.log('Generating secure token...');
         const secureToken = await generateTokenUseCase.execute(cardId);
-        console.log('Token generated successfully');
-
-        // 2. Mostrar vista segura
-        console.log('Opening secure view...');
         const result = await showSecureViewUseCase.execute({
           cardId,
           token: secureToken.token,
@@ -48,23 +44,29 @@ export const useSecureCardView = () => {
           throw new Error(result.error || 'Failed to show secure view');
         }
 
-        console.log('Secure view opened successfully');
-        setState({ loading: false, error: null });
+        setState({ loadingCardId: null, error: null });
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : 'Unknown error';
-        console.error('Error in secure card view process:', err);
         setState({
-          loading: false,
+          loadingCardId: null,
           error: errorMessage,
         });
       }
     },
-    [generateTokenUseCase, showSecureViewUseCase],
+    [generateTokenUseCase, showSecureViewUseCase]
+  );
+
+  const isLoadingCard = useCallback(
+    (cardId: string) => state.loadingCardId === cardId,
+    [state.loadingCardId]
   );
 
   return {
-    ...state,
+    loadingCardId: state.loadingCardId,
+    loading: state.loadingCardId !== null,
+    error: state.error,
     showSecureCard,
+    isLoadingCard,
   };
 };

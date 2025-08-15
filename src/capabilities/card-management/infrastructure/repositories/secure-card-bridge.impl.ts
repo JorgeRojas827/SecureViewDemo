@@ -13,14 +13,11 @@ export class SecureCardBridgeImpl implements SecureCardBridge {
   private listeners: Map<string, Function[]> = new Map();
 
   async openSecureView(
-    params: SecureCardViewParams,
+    params: SecureCardViewParams
   ): Promise<SecureCardViewResult> {
     try {
-      console.log('🔐 Opening secure view for card:', params.cardId);
-
-      // 1. Obtener datos sensibles de la tarjeta
       const secureData = await this.cardDataService.getSecureCardData(
-        params.cardId,
+        params.cardId
       );
 
       if (!secureData) {
@@ -31,7 +28,6 @@ export class SecureCardBridgeImpl implements SecureCardBridge {
         };
       }
 
-      // 2. Validar token
       if (!params.token || params.token.length === 0) {
         return {
           success: false,
@@ -40,14 +36,11 @@ export class SecureCardBridgeImpl implements SecureCardBridge {
         };
       }
 
-      // 3. Generar signature para el token
       const tokenResponse = await this.tokenService.generateCardToken({
         cardId: params.cardId,
         userId: 'user-001',
       });
 
-      // 4. Usar la librería nativa directamente
-      console.log('🚀 Calling native secure view...');
       await SecureCardNative.openSecureView({
         cardId: params.cardId,
         token: tokenResponse.token,
@@ -67,15 +60,12 @@ export class SecureCardBridgeImpl implements SecureCardBridge {
         },
       });
 
-      console.log('✅ Native secure view opened successfully');
       this.emitEvent('SECURE_VIEW_OPENED', { cardId: params.cardId });
 
       return {
         success: true,
       };
     } catch (error) {
-      console.error('❌ Error opening secure view:', error);
-
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       this.emitEvent('SECURE_VIEW_ERROR', { error: errorMessage });
@@ -90,9 +80,8 @@ export class SecureCardBridgeImpl implements SecureCardBridge {
 
   async isAvailable(): Promise<boolean> {
     try {
-      return SecureCardNative.isAvailable();
+      return await SecureCardNative.isAvailable();
     } catch (error) {
-      console.error('Error checking secure view availability:', error);
       return false;
     }
   }
@@ -101,7 +90,10 @@ export class SecureCardBridgeImpl implements SecureCardBridge {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, []);
     }
-    this.listeners.get(event)?.push(callback);
+    const eventListeners = this.listeners.get(event);
+    if (eventListeners) {
+      eventListeners.push(callback);
+    }
   }
 
   removeListener(event: string, callback: Function): void {
@@ -114,16 +106,10 @@ export class SecureCardBridgeImpl implements SecureCardBridge {
     }
   }
 
-  private emitEvent(event: string, data: any): void {
+  private emitEvent(event: string, data: unknown): void {
     const eventListeners = this.listeners.get(event);
     if (eventListeners) {
-      eventListeners.forEach(callback => {
-        try {
-          callback(data);
-        } catch (error) {
-          console.error('Error in event listener:', error);
-        }
-      });
+      eventListeners.forEach(callback => callback(data));
     }
   }
 }

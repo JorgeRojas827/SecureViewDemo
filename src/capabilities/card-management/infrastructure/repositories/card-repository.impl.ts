@@ -7,11 +7,9 @@ export class CardRepositoryImpl implements CardRepository {
 
   async getCards(): Promise<Card[]> {
     try {
-      // En producción obtener userId del contexto de autenticación
       const userId = 'user-001';
       return await this.cardDataService.getUserCards(userId);
     } catch (error) {
-      console.error('Error fetching cards from repository:', error);
       throw error;
     }
   }
@@ -20,7 +18,6 @@ export class CardRepositoryImpl implements CardRepository {
     try {
       return await this.cardDataService.getCard(cardId);
     } catch (error) {
-      console.error('Error fetching card by ID from repository:', error);
       throw error;
     }
   }
