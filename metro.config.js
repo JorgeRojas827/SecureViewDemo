@@ -1,11 +1,12 @@
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
-/**
- * Metro configuration
- * https://reactnative.dev/docs/metro
- *
- * @type {import('@react-native/metro-config').MetroConfig}
- */
+const util = require('util');
+if (!util.styleText) {
+  util.styleText = function(style, text) {
+    return text;
+  };
+}
+
 const config = {};
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);
