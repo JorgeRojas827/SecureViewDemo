@@ -231,8 +231,5 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 ## 🙏 Agradecimientos
 
 - React Native Community
-- Clean Architecture por Uncle Bob
 - Domain-Driven Design por Eric Evans
 - Testing Library por Kent C. Dodds
-
-## 📞 Contact
