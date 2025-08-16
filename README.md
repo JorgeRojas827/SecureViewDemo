@@ -235,8 +235,4 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 - Domain-Driven Design por Eric Evans
 - Testing Library por Kent C. Dodds
 
-## 📞 Contacto
-
-Jorge Luis Rojas Poma - [LinkedIn](https://linkedin.com/in/jorgeluisrojaspoma)
-
-Link del Proyecto: [https://github.com/jorgeluisrojaspoma/SecureViewDemo](https://github.com/jorgeluisrojaspoma/SecureViewDemo)
+## 📞 Contact
